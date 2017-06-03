@@ -42,10 +42,10 @@ namespace :sidekiq do
       on roles(fetch(:sidekiq_role)) do
         fetch(:sidekiq_processes).times do |idx|
           begin
-            sudo_if_needed "#{fetch(:monit_bin)} monitor #{sidekiq_service_name(idx)}"
-          rescue
             invoke 'sidekiq:monit:config'
             sudo_if_needed "#{fetch(:monit_bin)} monitor #{sidekiq_service_name(idx)}"
+          rescue
+            warn "There was an error while configuring a sidekiq monit template or turning on a monitoring for #{sidekiq_service_name(idx)}"
           end
         end
       end
